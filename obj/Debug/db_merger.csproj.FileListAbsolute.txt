@@ -1,0 +1,7 @@
+D:\Users\moonl\source\repos\db_merger\bin\Debug\db_merger.exe.config
+D:\Users\moonl\source\repos\db_merger\bin\Debug\db_merger.exe
+D:\Users\moonl\source\repos\db_merger\bin\Debug\db_merger.pdb
+D:\Users\moonl\source\repos\db_merger\obj\Debug\db_merger.csprojAssemblyReference.cache
+D:\Users\moonl\source\repos\db_merger\obj\Debug\db_merger.csproj.CoreCompileInputs.cache
+D:\Users\moonl\source\repos\db_merger\obj\Debug\db_merger.exe
+D:\Users\moonl\source\repos\db_merger\obj\Debug\db_merger.pdb
