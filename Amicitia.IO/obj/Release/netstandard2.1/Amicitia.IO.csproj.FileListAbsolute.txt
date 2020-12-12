@@ -1,0 +1,9 @@
+D:\Users\moonl\source\repos\db_merger\Amicitia.IO\bin\Release\netstandard2.1\Amicitia.IO.deps.json
+D:\Users\moonl\source\repos\db_merger\Amicitia.IO\bin\Release\netstandard2.1\Amicitia.IO.dll
+D:\Users\moonl\source\repos\db_merger\Amicitia.IO\bin\Release\netstandard2.1\Amicitia.IO.pdb
+D:\Users\moonl\source\repos\db_merger\Amicitia.IO\obj\Release\netstandard2.1\Amicitia.IO.csprojAssemblyReference.cache
+D:\Users\moonl\source\repos\db_merger\Amicitia.IO\obj\Release\netstandard2.1\Amicitia.IO.csproj.CoreCompileInputs.cache
+D:\Users\moonl\source\repos\db_merger\Amicitia.IO\obj\Release\netstandard2.1\Amicitia.IO.AssemblyInfoInputs.cache
+D:\Users\moonl\source\repos\db_merger\Amicitia.IO\obj\Release\netstandard2.1\Amicitia.IO.AssemblyInfo.cs
+D:\Users\moonl\source\repos\db_merger\Amicitia.IO\obj\Release\netstandard2.1\Amicitia.IO.dll
+D:\Users\moonl\source\repos\db_merger\Amicitia.IO\obj\Release\netstandard2.1\Amicitia.IO.pdb

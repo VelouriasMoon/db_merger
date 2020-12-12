@@ -5,3 +5,7 @@ D:\Users\moonl\source\repos\db_merger\obj\Release\db_merger.csproj.CoreCompileIn
 D:\Users\moonl\source\repos\db_merger\obj\Release\db_merger.exe
 D:\Users\moonl\source\repos\db_merger\obj\Release\db_merger.pdb
 D:\Users\moonl\source\repos\db_merger\obj\Release\db_merger.csprojAssemblyReference.cache
+D:\Users\moonl\source\repos\db_merger\bin\Release\System.Runtime.CompilerServices.Unsafe.xml
+D:\Users\moonl\source\repos\db_merger\obj\Release\db_merger.exe.config
+D:\Users\moonl\source\repos\db_merger\obj\Release\db_merger.csproj.Fody.CopyLocal.cache
+D:\Users\moonl\source\repos\db_merger\obj\Release\db_merger.csproj.CopyComplete
