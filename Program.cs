@@ -54,6 +54,16 @@ namespace db_merger
                 else
                     Console.WriteLine("Invaild Arugument: 2");
             }
+            else if (args[0] == "-p")
+            {
+                if (args[1] == "-obj")
+                {
+                    string outfile = Path.GetFileNameWithoutExtension(args[2]) + "_Patched.bin";
+                    obj_db.Patch_objdb(args[2], outfile, args[3]);
+                }
+                else
+                    Console.WriteLine("Invaild Arugument: 2");
+            }
             else
             {
                 Console.WriteLine("Invaild Arugument: 1");

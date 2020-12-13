@@ -115,6 +115,7 @@ namespace db_merger
         public static List<string> ObjectNames { get; private set; }
         public static List<string> ModelSets { get; private set; }
         public static List<string> ObjectSets { get; private set; }
+        public static List<int> IDs { get; private set; }
 
         public static void ReadStrings(string infile)
         {
@@ -171,9 +172,11 @@ namespace db_merger
             objdb = new objdbFile();
             objdb.ReadData(infile);
             ObjectSets = new List<string>();
+            IDs = new List<int>();
 
             for (int i = 0; i < objdb.numofObj; i++)
             {
+                IDs.Add(Convert.ToInt32(objdb.ObjectList[i].id));
                 ObjectSets.Add(Convert.ToString($"Object_Set:\n  Name: {ObjectSetNames[i * 4]}\n  ID: {objdb.ObjectList[i].id}\n  Model_Name: {ObjectSetNames[(i * 4) + 1]}\n  Texture_Name: {ObjectSetNames[(i * 4) + 2]}\n  Farc_Name: {ObjectSetNames[(i * 4) + 3]}\n"));
             }
         }
@@ -322,58 +325,94 @@ namespace db_merger
             }
         }
 
+        public static void extract_objdb(string infile, string outfile)
+        {
+            ReadStrings(infile);
+            Dump_models(infile);
+            Dump_objdb(infile);
+
+            objdb = new objdbFile();
+            objdb.ReadData(infile);
+
+            if (File.Exists(outfile))
+                File.Delete(outfile);
+            Console.WriteLine("Converting obj_db to yaml");
+            int j = 0;
+            for (int i = 0; i < objdb.numofObj; i++)
+            {
+                if (!File.Exists(outfile))
+                {
+                    using (StreamWriter sw = File.CreateText(outfile))
+                    {
+                        sw.Write(ObjectSets[i]);
+                        for (; j < objdb.numofMesh;)
+                        {
+                            if (ModelSets[j].Contains($"Set_ID: {objdb.ObjectList[i].id}\n"))
+                            {
+                                sw.Write(ModelSets[j]);
+                                j++;
+                            }
+                            else
+                                break;
+                        }
+                    }
+                }
+                else
+                {
+                    using (StreamWriter sw = File.AppendText(outfile))
+                    {
+                        sw.Write(ObjectSets[i]);
+                        for (; j < objdb.numofMesh;)
+                        {
+                            if (ModelSets[j].Contains($"Set_ID: {objdb.ObjectList[i].id}\n"))
+                            {
+                                sw.Write(ModelSets[j]);
+                                j++;
+                            }
+                            else
+                                break;
+                        }
+                    }
+                }
+            }
+        }
+
+        public static void Patch_objdb(string infile, string outfile, string inpatch)
+        {
+            if (File.Exists("Temp.yml"))
+                File.Delete("Temp.yml");
+            extract_objdb(infile, "Temp.yml");
+            string[] patch = File.ReadAllLines(inpatch);
+            int oldID = Convert.ToInt32(patch[2].Split(' ')[3]);
+            int newID = oldID;
+
+            Console.WriteLine("Patching and fixing IDs");
+            while (IDs.Contains(newID))
+            {
+                newID++;
+            }
+            patch[2] = patch[2].Replace(Convert.ToString(oldID), Convert.ToString(newID));
+            foreach (string line in patch)
+            {
+                if (line.Contains("Set_ID"))
+                {
+                    line.Replace(Convert.ToString(oldID), Convert.ToString(newID));
+                }
+                using (StreamWriter sw = File.AppendText("Temp.yml"))
+                {
+                    sw.Write(line + "\n");
+                }
+            }
+            
+            Write_objdb("Temp.yml", outfile);
+            File.Delete("Temp.yml");
+        }
+
         public static void Obj_db(string type, string infile, string outfile)
         {
             if (type == "-e")
             {
-                ReadStrings(infile);
-                Dump_models(infile);
-                Dump_objdb(infile);
-
-                objdb = new objdbFile();
-                objdb.ReadData(infile);
-
-                if (File.Exists(outfile))
-                    File.Delete(outfile);
-                Console.WriteLine("Converting obj_db to yaml");
-                int j = 0;
-                for (int i = 0; i < objdb.numofObj; i++)
-                {
-                    if (!File.Exists(outfile))
-                    {
-                        using (StreamWriter sw = File.CreateText(outfile))
-                        {
-                            sw.Write(ObjectSets[i]);
-                            for (; j < objdb.numofMesh;)
-                            {
-                                if (ModelSets[j].Contains($"Set_ID: {objdb.ObjectList[i].id}\n"))
-                                {
-                                    sw.Write(ModelSets[j]);
-                                    j++;
-                                }
-                                else
-                                    break;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        using (StreamWriter sw = File.AppendText(outfile))
-                        {
-                            sw.Write(ObjectSets[i]);
-                            for (; j < objdb.numofMesh;)
-                            {
-                                if (ModelSets[j].Contains($"Set_ID: {objdb.ObjectList[i].id}\n"))
-                                {
-                                    sw.Write(ModelSets[j]);
-                                    j++;
-                                }
-                                else
-                                    break;
-                            }
-                        }
-                    }
-                }
+                extract_objdb(infile, outfile);
             }
             else if (type == "-b")
             {
