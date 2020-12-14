@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Amicitia;
 
-namespace db_merger
+namespace db_merger.Formats
 {
     class obj_db
     {
@@ -24,13 +24,6 @@ namespace db_merger
                 objset_id = models.ReadInt16();
                 NamePos = models.ReadUInt32();
             }
-            public void Write(BinaryObjectWriter models)
-            {
-                models.WriteInt16(id);
-                models.WriteInt16(objset_id);
-                models.WriteUInt32(NamePos);
-            }
-            
         }
         public class ObjectBlock
         {
@@ -52,18 +45,6 @@ namespace db_merger
                 padding_1 = objects.ReadInt64();
                 padding_2 = objects.ReadInt64();
             }
-
-            public void Write(BinaryObjectWriter objects)
-            {
-                objects.WriteUInt32(NamePos);
-                objects.WriteUInt32(id);
-                objects.WriteUInt32(FileNamePos);
-                objects.WriteUInt32(TextureNamePos);
-                objects.WriteUInt32(FarcNamePos);
-                objects.WriteUInt64(0);
-                objects.WriteUInt64(0);
-            }
-
         }
         public class objdbFile
         {
@@ -155,25 +136,29 @@ namespace db_merger
             }
         }
 
-        public static void Dump_models(string infile)
+        public static void Dump_Objects(string infile)
         {
+            // Read each Object Entry
             objdb = new objdbFile();
             objdb.ReadData(infile);
             ModelSets = new List<string>();
 
+            // Phrase each entry into a yaml format
             for (int i = 0; i < objdb.numofMesh; i++)
             {
                 ModelSets.Add(Convert.ToString($"  Object:\n    ID: {objdb.ModelList[i].id}\n    Set_ID: {objdb.ModelList[i].objset_id}\n    Name: {ObjectNames[i]}\n"));
             }
         }
 
-        public static void Dump_objdb(string infile)
+        public static void Dump_ObjectSets(string infile)
         {
+            // Read each Object Set Entry
             objdb = new objdbFile();
             objdb.ReadData(infile);
             ObjectSets = new List<string>();
             IDs = new List<int>();
 
+            // Phrase each Set into yaml and Store IDs for merging
             for (int i = 0; i < objdb.numofObj; i++)
             {
                 IDs.Add(Convert.ToInt32(objdb.ObjectList[i].id));
@@ -183,6 +168,7 @@ namespace db_merger
 
         public static void Read_Yaml(string infile)
         {
+            // Splits each Object Set into it's own array entry
             string yamlfile = File.ReadAllText(infile);
             yamlfile = yamlfile.Replace("Object_Set:\n", "*");
             string[] Sets = yamlfile.Split('*');
@@ -190,11 +176,13 @@ namespace db_merger
             ObjectSets = new List<string>();
             ModelSets = new List<string>();
 
+            // Remove Spaces and stores entry in list
             foreach (string Set in Sets)
             {
                 ObjectSets.Add(Set.Replace(" ", ""));
             }
 
+            // Splits each Object from Set and stores in list
             foreach (string Set in Sets)
             {
                 string subset = Set.Replace("Object:\n", "*");
@@ -309,6 +297,7 @@ namespace db_merger
 
                 obj_db.Align(1);
 
+                // Write Strings and rewrite the string pointer
                 for (int i = 0; i < ModelSets.Count; i++)
                 {
                     string subset = ModelSets[i].Replace("\n", "*");
@@ -327,15 +316,17 @@ namespace db_merger
 
         public static void extract_objdb(string infile, string outfile)
         {
+            // Read File Contents
             ReadStrings(infile);
-            Dump_models(infile);
-            Dump_objdb(infile);
+            Dump_Objects(infile);
+            Dump_ObjectSets(infile);
 
             objdb = new objdbFile();
             objdb.ReadData(infile);
 
             if (File.Exists(outfile))
                 File.Delete(outfile);
+            // Write Each object phrased set to final yaml 
             Console.WriteLine("Converting obj_db to yaml");
             int j = 0;
             for (int i = 0; i < objdb.numofObj; i++)
@@ -345,6 +336,7 @@ namespace db_merger
                     using (StreamWriter sw = File.CreateText(outfile))
                     {
                         sw.Write(ObjectSets[i]);
+                        // Check Set IDs of each Object and pair them to the Set Entry
                         for (; j < objdb.numofMesh;)
                         {
                             if (ModelSets[j].Contains($"Set_ID: {objdb.ObjectList[i].id}\n"))
@@ -379,13 +371,16 @@ namespace db_merger
 
         public static void Patch_objdb(string infile, string outfile, string inpatch)
         {
+            // Extract obj_db to temp file
             if (File.Exists("Temp.yml"))
                 File.Delete("Temp.yml");
             extract_objdb(infile, "Temp.yml");
+            // Read new Patch yaml and check IDs
             string[] patch = File.ReadAllLines(inpatch);
             int oldID = Convert.ToInt32(patch[2].Split(' ')[3]);
             int newID = oldID;
 
+            // If ID already exists find an unused one
             Console.WriteLine("Patching and fixing IDs");
             while (IDs.Contains(newID))
             {
