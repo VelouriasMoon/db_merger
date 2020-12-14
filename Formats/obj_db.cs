@@ -402,17 +402,23 @@ namespace db_merger.Formats
                 {
                     if (line.Contains("Set_ID"))
                     {
-                        line.Replace(Convert.ToString(oldID), Convert.ToString(newID));
+                        using (StreamWriter sw = File.AppendText("Temp.yml"))
+                        {
+                            sw.Write(line.Replace(Convert.ToString(oldID), Convert.ToString(newID)) + "\n");
+                        }
                     }
-                    using (StreamWriter sw = File.AppendText("Temp.yml"))
+                    else
                     {
-                        sw.Write(line + "\n");
+                        using (StreamWriter sw = File.AppendText("Temp.yml"))
+                        {
+                            sw.Write(line + "\n");
+                        }
                     }
                 }
             }
 
             Write_objdb("Temp.yml", outfile);
-            File.Delete("Temp.yml");
+            //File.Delete("Temp.yml");
         }
 
         public static void Obj_db(string type, string infile, string outfile)
