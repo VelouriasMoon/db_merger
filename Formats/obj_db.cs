@@ -376,43 +376,31 @@ namespace db_merger.Formats
                 File.Delete("Temp.yml");
             extract_objdb(infile, "Temp.yml");
             // Read new Patch yaml and check IDs
-            string patch = File.ReadAllText(inpatch);
-            patch = patch.Replace("\r", "").Replace("Object_Set:\n", "*");
-            string[] Sets = patch.Split('*');
-            foreach (string set in Sets)
-            {
-                if (set == "" || set == null || set.Length <= 0)
-                    continue;
-                string[] data = set.Split('\n');
-                int oldID = Convert.ToInt32(data[1].Split(':')[1].Replace(" ", ""));
-                int newID = oldID;
+            string[] patch = File.ReadAllLines(inpatch);
+            int oldID = Convert.ToInt32(patch[2].Split(' ')[3]);
+            int newID = oldID;
 
-                // If ID already exists find an unused one
-                Console.WriteLine("Patching and fixing IDs");
-                while (IDs.Contains(newID))
+            // If ID already exists find an unused one
+            Console.WriteLine("Patching and fixing IDs");
+            while (IDs.Contains(newID))
+            {
+                newID++;
+            }
+            patch[2] = patch[2].Replace(Convert.ToString(oldID), Convert.ToString(newID));
+            foreach (string line in patch)
+            {
+                if (line.Contains("Set_ID"))
                 {
-                    newID++;
+                    line.Replace(Convert.ToString(oldID), Convert.ToString(newID));
                 }
-                data[1] = data[1].Replace(Convert.ToString(oldID), Convert.ToString(newID));
                 using (StreamWriter sw = File.AppendText("Temp.yml"))
                 {
-                    sw.Write("Object_Set:\n");
-                }
-                foreach (string line in data)
-                {
-                    if (line.Contains("Set_ID"))
-                    {
-                        line.Replace(Convert.ToString(oldID), Convert.ToString(newID));
-                    }
-                    using (StreamWriter sw = File.AppendText("Temp.yml"))
-                    {
-                        sw.Write(line + "\n");
-                    }
+                    sw.Write(line + "\n");
                 }
             }
-
+            
             Write_objdb("Temp.yml", outfile);
-            //File.Delete("Temp.yml");
+            File.Delete("Temp.yml");
         }
 
         public static void Obj_db(string type, string infile, string outfile)
