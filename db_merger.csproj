@@ -55,6 +55,7 @@
   <ItemGroup>
     <Compile Include="Formats\obj_db.cs" />
     <Compile Include="Formats\spr_db.cs" />
+    <Compile Include="Formats\str_array.cs" />
     <Compile Include="Formats\txt_db.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

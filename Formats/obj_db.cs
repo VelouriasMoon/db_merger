@@ -126,7 +126,6 @@ namespace db_merger.Formats
 
                 for (int i = 0; i < count; i++)
                 {
-                    long currentpos = database.Position;
                     string stringcheck = database.ReadString(StringBinaryFormat.NullTerminated);
                     if (stringcheck == "")
                         i--;

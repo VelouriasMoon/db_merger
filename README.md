@@ -9,4 +9,5 @@ Splits pv_db, itm_tbl, gm_tbl into easy to edit modular files for each entry and
 Converters obj_db into a yaml file and back to binary.<br />
 
 Credits:<br />
-[TGEnigma's Amicitia.IO](https://github.com/TGEnigma/Amicitia.IO).
+[TGEnigma's Amicitia.IO](https://github.com/TGEnigma/Amicitia.IO).\
+Research on obj/spr db's come from [MikuMikuLibrary](https://github.com/blueskythlikesclouds/MikuMikuLibrary)

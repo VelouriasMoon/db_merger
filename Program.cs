@@ -15,9 +15,10 @@ namespace db_merger
         {
             if (args.Length <= 1)
             {
-                Console.WriteLine("Usage: db_merger.exe [-e/-b] [-pv/-itm/-gm/-obj] [db file]");
+                Console.WriteLine("Usage: db_merger.exe [-e/-b/-p] [-pv/-itm/-gm/-obj] [db file]");
                 Console.WriteLine("  -e:\tExtract file");
                 Console.WriteLine("  -b:\tBuild file");
+                Console.WriteLine("  -p:\tPatch file");
                 Console.WriteLine("\n  -pv:\tInput is a pv_db");
                 Console.WriteLine("  -itm:\tInput is a itm_tbl");
                 Console.WriteLine("  -gm:\tInput is a gm_module");
@@ -36,13 +37,15 @@ namespace db_merger
                     string outfile = Path.GetFileNameWithoutExtension(args[2]) + ".yml";
                     obj_db.Obj_db("-e", args[2], outfile);
                 }
+                else if (args[1] == "-spr")
+                    spr_db.Extract_sprdb(args[2]);
                 else
                     Console.WriteLine("Invaild Arugument: 2");
             }
             else if (args[0] == "-b")
             {
                 if (args[1] == "-pv")
-                    txt_db.build_pv_db(args[1]);
+                    txt_db.build_pv_db(args[2]);
                 else if (args[1] == "-itm")
                     txt_db.build_itm_tbl(args[2]);
                 else if (args[1] == "-gm")
