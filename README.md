@@ -1,3 +1,9 @@
+# Notice
+This Repository is no longer being worked on or updated, See Mega Mix Mod Manager more up to date code and tools
+https://github.com/VelouriasMoon/Mega-Mix-Mod-Manager
+
+
+
 # db_merger
 Tool to help with merging pv_db's for Project Diva
 
